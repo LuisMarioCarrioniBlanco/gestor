@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragmentos/plantilla :: cabecera"></head>
+<body>
+
+<nav th:replace="fragmentos/plantilla :: navegacion"></nav>
+
+<div class="container">
+    <h2 class="mb-4">Proyectos</h2>
+    
+    <a href="/proyectos/nuevo" class="btn btn-success mb-3">Nuevo Proyecto</a>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4" th:each="proyecto : ${proyectos}">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${proyecto.nombre}">Nombre del Proyecto</h5>
+                    <p class="card-text" th:text="${proyecto.descripcion}">Descripción del proyecto</p>
+                    <div class="mb-2">
+                        <small class="text-muted">
+                            Fecha inicio: <span th:text="${#dates.format(proyecto.fechaInicio, 'dd-MM-yyyy')}">01-01-2025</span>
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            Fecha fin: <span th:text="${#dates.format(proyecto.fechaFin, 'dd-MM-yyyy')}">31-01-2025</span>
+                        </small>
+                    </div>
+                    <a th:href="@{/proyectos/{id}(id=${proyecto.id})}" class="btn btn-primary btn-sm">Ver detalles</a>
+                    <a th:href="@{/tareas/proyecto/{id}/nueva(id=${proyecto.id})}" class="btn btn-success btn-sm">Añadir tarea</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragmentos/plantilla :: pie"></footer>
+
+</body>
+</html>

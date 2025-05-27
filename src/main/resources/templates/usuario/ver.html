@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragmentos/plantilla :: cabecera"></head>
+<body>
+
+<nav th:replace="fragmentos/plantilla :: navegacion"></nav>
+
+<div class="container">
+    <h2 class="mb-4">Perfil de Usuario</h2>
+    
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h5 class="card-title mb-0" th:text="${usuario.nombreUsuario}">Nombre de Usuario</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Correo:</strong> <span th:text="${usuario.correo}">email@example.com</span></p>
+            <p><strong>Rol:</strong> <span th:text="${usuario.rol}">Rol del usuario</span></p>
+            
+            <div class="mt-4">
+                <a th:href="@{/usuarios/{id}/editar(id=${usuario.id})}" class="btn btn-warning">Editar</a>
+                <a href="/usuarios" class="btn btn-secondary">Volver a Usuarios</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragmentos/plantilla :: pie"></footer>
+
+</body>
+</html>

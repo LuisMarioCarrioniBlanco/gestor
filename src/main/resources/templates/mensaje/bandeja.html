@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragmentos/plantilla :: cabecera"></head>
+<body>
+
+<nav th:replace="fragmentos/plantilla :: navegacion"></nav>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Menú lateral de mensajes -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="/mensajes" class="list-group-item list-group-item-action" th:classappend="${tipoMensaje == 'recibidos' ? 'active' : ''}">
+                    <i class="bi bi-inbox"></i> Recibidos
+                </a>
+                <a href="/mensajes/enviados" class="list-group-item list-group-item-action" th:classappend="${tipoMensaje == 'enviados' ? 'active' : ''}">
+                    <i class="bi bi-send"></i> Enviados
+                </a>
+                <a href="/mensajes/nuevo" class="list-group-item list-group-item-action bg-success text-white">
+                    <i class="bi bi-pencil"></i> Redactar mensaje
+                </a>
+            </div>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0" th:text="${tipoMensaje == 'recibidos' ? 'Bandeja de Entrada' : 'Mensajes Enviados'}">Mensajes</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Mensaje de éxito o error -->
+                    <div th:if="${mensajeExito}" class="alert alert-success" th:text="${mensajeExito}"></div>
+                    <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
+                    
+                    <!-- Lista de mensajes -->
+                    <div th:if="${#lists.isEmpty(mensajes)}" class="alert alert-info">
+                        No hay mensajes que mostrar.
+                    </div>
+                    
+                    <div class="table-responsive" th:if="${not #lists.isEmpty(mensajes)}">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" th:if="${tipoMensaje == 'recibidos'}">Remitente</th>
+                                    <th scope="col" th:if="${tipoMensaje == 'enviados'}">Destinatario</th>
+                                    <th scope="col">Asunto</th>
+                                    <th scope="col">Fecha</th>
+                                    <th scope="col" th:if="${tipoMensaje == 'recibidos'}">Estado</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="mensaje : ${mensajes}" th:classappend="${tipoMensaje == 'recibidos' && !mensaje.leido ? 'table-primary fw-bold' : ''}">
+                                    <!-- Remitente o Destinatario -->
+                                    <td th:if="${tipoMensaje == 'recibidos'}" th:text="${mensaje.emisor.nombreUsuario}">Remitente</td>
+                                    <td th:if="${tipoMensaje == 'enviados'}" th:text="${mensaje.receptor.nombreUsuario}">Destinatario</td>
+                                    
+                                    <!-- Asunto -->
+                                    <td th:text="${mensaje.asunto}">Asunto del mensaje</td>
+                                    
+                                    <!-- Fecha -->
+                                    <td th:text="${#dates.format(mensaje.fechaEnvio, 'dd-MM-yyyy HH:mm')}">Fecha</td>
+                                    
+                                    <!-- Estado (solo para recibidos) -->
+                                    <td th:if="${tipoMensaje == 'recibidos'}">
+                                        <span class="badge" th:classappend="${mensaje.leido ? 'bg-secondary' : 'bg-primary'}" 
+                                              th:text="${mensaje.leido ? 'Leído' : 'No leído'}">Estado</span>
+                                    </td>
+                                    
+                                    <!-- Acciones -->
+                                    <td>
+                                        <a th:href="@{/mensajes/{id}(id=${mensaje.id})}" class="btn btn-sm btn-info">Ver</a>
+                                        
+                                        <!-- Responder (solo para recibidos) -->
+                                        <a th:if="${tipoMensaje == 'recibidos'}"
+                                           th:href="@{/mensajes/nuevo(receptorId=${mensaje.emisor.id})}" 
+                                           class="btn btn-sm btn-outline-primary">Responder</a>
+                                        
+                                        <!-- Eliminar -->
+                                        <form style="display:inline;" th:action="@{/mensajes/{id}/eliminar(id=${mensaje.id})}" method="post">
+                                            <button type="submit" class="btn btn-sm btn-danger" 
+                                                    onclick="return confirm('¿Estás seguro de eliminar este mensaje?')">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragmentos/plantilla :: pie"></footer>
+
+</body>
+</html>

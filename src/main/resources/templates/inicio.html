@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragmentos/plantilla :: cabecera"></head>
+<body>
+
+<nav th:replace="fragmentos/plantilla :: navegacion"></nav>
+
+<div class="container">
+    <div sec:authorize="!isAuthenticated()">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Gestor de Proyectos Colaborativos</h1>
+            <p class="lead">Sistema para coordinar equipos de trabajo y fases de proyectos</p>
+            <hr class="my-4">
+            <p>Este sistema permite gestionar proyectos, asignar tareas, y coordinar equipos de trabajo de manera eficiente.</p>
+            <div class="mt-3">
+                <a class="btn btn-primary btn-lg me-2" href="/login" role="button">Iniciar Sesión</a>
+                <a class="btn btn-outline-primary btn-lg" href="/registro" role="button">Registrarse</a>
+            </div>
+        </div>
+    </div>
+    
+    <div sec:authorize="isAuthenticated()">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2>Bienvenido, <span sec:authentication="name">Usuario</span></h2>
+                <p class="lead" th:if="${usuarioActual != null}">
+                    Tu rol es: <span th:text="${usuarioActual.rol}">Rol</span>
+                </p>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Proyectos</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Total: <span th:text="${proyectos.size()}">0</span></h6>
+                        <p class="card-text">Gestiona tus proyectos colaborativos.</p>
+                        <a href="/proyectos" class="btn btn-sm btn-outline-primary">Ver Proyectos</a>
+                        <a sec:authorize="hasAnyRole('PROFESOR', 'LIDER_EQUIPO')" href="/proyectos/nuevo" class="btn btn-sm btn-outline-success">Nuevo Proyecto</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Tareas</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Total: <span th:text="${totalTareas}">0</span></h6>
+                        <p class="card-text">Administra las tareas de tus proyectos.</p>
+                        <a href="/tareas" class="btn btn-sm btn-outline-primary">Ver Tareas</a>
+                        <a sec:authorize="hasAnyRole('PROFESOR', 'LIDER_EQUIPO')" href="/tareas/nueva" class="btn btn-sm btn-outline-success">Nueva Tarea</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" sec:authorize="hasAnyRole('PROFESOR', 'LIDER_EQUIPO')">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Usuarios</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Total: <span th:text="${usuarios.size()}">0</span></h6>
+                        <p class="card-text">Gestiona los miembros del equipo.</p>
+                        <a href="/usuarios" class="btn btn-sm btn-outline-primary">Ver Usuarios</a>
+                        <a href="/usuarios/nuevo" class="btn btn-sm btn-outline-success">Nuevo Usuario</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4" th:if="${tareas != null && !tareas.empty}">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Mis Tareas Asignadas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Título</th>
+                                        <th>Proyecto</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="tarea : ${tareas}">
+                                        <td th:text="${tarea.titulo}">Título de la tarea</td>
+                                        <td th:text="${tarea.proyecto.nombre}">Nombre del proyecto</td>
+                                        <td>
+                                            <span th:class="${tarea.estado == 'PENDIENTE' ? 'badge bg-warning' : (tarea.estado == 'EN_PROGRESO' ? 'badge bg-info' : 'badge bg-success')}" th:text="${tarea.estado}">Estado</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/tareas/{id}(id=${tarea.id})}" class="btn btn-sm btn-info">Ver</a>
+                                            <a th:href="@{/tareas/{id}/editar(id=${tarea.id})}" class="btn btn-sm btn-warning">Editar</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragmentos/plantilla :: pie"></footer>
+
+</body>
+</html>

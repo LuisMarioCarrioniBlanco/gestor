@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragmentos/plantilla :: cabecera"></head>
+<body>
+
+<nav th:replace="fragmentos/plantilla :: navegacion"></nav>
+
+<div class="container">
+    <h2 class="mb-4" th:text="${tarea.id == null ? 'Crear Nueva Tarea' : 'Editar Tarea'}">Formulario de Tarea</h2>
+    
+    <form th:action="@{/tareas}" th:object="${tarea}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título de la Tarea</label>
+            <input type="text" class="form-control" id="titulo" th:field="*{titulo}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" th:field="*{descripcion}" rows="3"></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label for="estado" class="form-label">Estado</label>
+            <select class="form-control" id="estado" th:field="*{estado}" required>
+                <option value="PENDIENTE">Pendiente</option>
+                <option value="EN_PROGRESO">En Progreso</option>
+                <option value="COMPLETADA">Completada</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="proyecto" class="form-label">Proyecto</label>
+            <select class="form-control" id="proyecto" th:field="*{proyecto}" required>
+                <option th:each="proyecto : ${proyectos}" 
+                        th:value="${proyecto.id}" 
+                        th:text="${proyecto.nombre}">Nombre del Proyecto</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="asignadoA" class="form-label">Asignar a</label>
+            <select class="form-control" id="asignadoA" th:field="*{asignadoA}">
+                <option value="">-- Sin asignar --</option>
+                <option th:each="usuario : ${usuarios}" 
+                        th:value="${usuario.id}" 
+                        th:text="${usuario.nombreUsuario}">Nombre de Usuario</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a th:href="@{/tareas}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<footer th:replace="fragmentos/plantilla :: pie"></footer>
+
+</body>
+</html>

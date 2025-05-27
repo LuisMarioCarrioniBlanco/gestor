@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragmentos/plantilla :: cabecera"></head>
+<body>
+
+<nav th:replace="fragmentos/plantilla :: navegacion"></nav>
+
+<div class="container">
+    <h2 class="mb-4" th:text="${proyecto != null ? 'Tareas del Proyecto: ' + proyecto.nombre : 'Lista de Tareas'}">Lista de Tareas</h2>
+    
+    <a th:if="${proyecto != null}" th:href="@{/tareas/proyecto/{id}/nueva(id=${proyecto.id})}" class="btn btn-success mb-3">Nueva Tarea</a>
+    <a th:if="${proyecto == null}" href="/tareas/nueva" class="btn btn-success mb-3">Nueva Tarea</a>
+    
+    <div class="alert alert-info" th:if="${tareas.empty}">
+        No hay tareas disponibles.
+    </div>
+    
+    <div class="row" th:unless="${tareas.empty}">
+        <div class="col-md-4 mb-4" th:each="tarea : ${tareas}">
+            <div class="card">
+                <div class="card-header" th:class="${tarea.estado == 'PENDIENTE' ? 'card-header bg-warning' : (tarea.estado == 'EN_PROGRESO' ? 'card-header bg-info' : 'card-header bg-success')}">
+                    <h5 class="card-title mb-0" th:text="${tarea.titulo}">Título de la Tarea</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text" th:text="${tarea.descripcion}">Descripción de la tarea</p>
+                    <p class="text-muted">
+                        <small>
+                            <strong>Estado:</strong> <span th:text="${tarea.estado}">Estado</span>
+                        </small>
+                    </p>
+                    <p class="text-muted" th:if="${tarea.asignadoA != null}">
+                        <small>
+                            <strong>Asignada a:</strong> <span th:text="${tarea.asignadoA.nombreUsuario}">Usuario</span>
+                        </small>
+                    </p>
+                    <div class="mt-3">
+                        <a th:href="@{/tareas/{id}(id=${tarea.id})}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="@{/tareas/{id}/editar(id=${tarea.id})}" class="btn btn-sm btn-warning">Editar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="fragmentos/plantilla :: pie"></footer>
+
+</body>
+</html>
